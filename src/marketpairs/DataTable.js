@@ -55,15 +55,13 @@ const DataTable = (props) => {
         }
     }
     const ellipsisStyle = {
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
+        overflow: 'auto',
         height: '800px',
         maxHeight: '800px',
     }
     return (
         <React.Fragment>
-            <div className="d-none d-sm-inline" style={ellipsisStyle}>
+            <div className="d-none d-sm-inline" >
                 <div className="row table-header small font-weight-bold py-1" style={styleTable}>
                     <div className="col">Pair</div>
                     <div className="col">Last Price</div>
@@ -72,8 +70,11 @@ const DataTable = (props) => {
                     <div className="col">24h Low</div>
                     <div className="col">24h Volume</div>
                 </div>
+            </div>auto
+            <div style={ellipsisStyle}>
+                {rows}
             </div>
-            {rows}
+
         </React.Fragment>
     );
 }
