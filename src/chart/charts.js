@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { getData } from "./utils"
+// import { getData } from "./utils"
 import PropTypes from "prop-types";
 
 import { format } from "d3-format";
@@ -31,12 +31,51 @@ import { fitWidth } from "react-stockcharts/lib/helper";
 import { last } from "react-stockcharts/lib/utils";
 // import { TypeChooser } from "react-stockcharts/lib/helper";
 
+
+function parseData(parse) {
+	return  {
+		date : new Date(parse.C),
+		open : +parse.o,
+		high : +parse.h,
+		low : +parse.l,
+		close : +parse.c,
+		volume :  +parse.v,
+	};
+}
 class ChartsComponent extends React.Component {
 
+	// getInitialState() {
+	// 	return {
+	// 		chart: this.props || {}
+	// 	};
+	// };
 	componentDidMount() {
-		getData().then(data => {
-			this.setState({ data })
-		})
+		// getData().then(data => {
+		// 	this.setState({ data })
+		// })
+		const ws = new WebSocket('wss://stream.binance.com:9443/ws');
+		const msg = {
+			method: 'SUBSCRIBE',
+			params: ['btcusdt@ticker'],
+			id: 1,
+		};
+
+		ws.onopen = () => {
+			ws.send(JSON.stringify(msg));
+		};
+		ws.onmessage = ev =>{
+			console.log('message',JSON.parse(ev.data))
+			if (ev.data!== undefined ){
+				const date = new Date(JSON.parse(ev.data).C);
+				if (date){
+					let data = this.props.data;
+					console.log(data)
+					data.push(parseData(JSON.parse(ev.data)));
+					this.setState({data})
+					console.log(data)
+				}
+			}
+		}
 	}
 	render() {
 		const ema20 = ema()
